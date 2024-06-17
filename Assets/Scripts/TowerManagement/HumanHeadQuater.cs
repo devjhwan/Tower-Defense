@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HeadQuater : TowerBase
+public class HumanHeadQuater : TowerBase
 {
     // Start is called before the first frame update
     void Start()
