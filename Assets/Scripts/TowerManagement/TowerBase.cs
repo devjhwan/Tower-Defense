@@ -3,6 +3,7 @@ using UnityEngine;
 
 public abstract class TowerBase : MonoBehaviour, ISelectable
 {
+    protected Player player;
     private Camera mainCamera;
 
     protected int constructionTime;
@@ -73,6 +74,17 @@ public abstract class TowerBase : MonoBehaviour, ISelectable
                 isSelected = true;
                 Debug.Log("Object is selected");
             }
+            //TODO 만약 드래그 도중이었고 놓았을 때 타워 혹은 빈 땅을 가리키고 있었다면 해당 위치로 유닛을 보내는 함수 호출 (Player).
+            else if (isDragging)
+            {
+                Vector2 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
+
+                if (hit.collider != null && (hit.transform.CompareTag("Tower") || hit.transform.CompareTag("EmptyLand")))
+                {
+                    this.player.MoveUnit(this.gameObject, hit.transform.gameObject);
+                }
+            }
             isDragging = false;
             isDragEnabled = false;
         }
@@ -87,9 +99,20 @@ public abstract class TowerBase : MonoBehaviour, ISelectable
         }
     }
 
+    public int GetTroopAmount()
+    {
+        return this.troopAmount;
+    }
+
+    public void SetPlayer(Player player)
+    {
+        this.player = player;
+    }
+
     //ISelectable로 부터 상속받음
     public void OnObjectClicked()
     {
+        //TODO 클릭된 오브젝트의 소유권이 현재 플레이어에게 있는지 확인. 소유권이 있다면 아래 로직 수행. 없으면 무시
         initialMousePosition = GetMouseWorldPosition();
         isDragEnabled = true;
     }
